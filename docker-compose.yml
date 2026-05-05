@@ -17,10 +17,8 @@ services:
     build: ./backend
     restart: always
     environment:
-      DB_HOST: db
-      DB_USER: user
-      DB_PASSWORD: password
-      DB_NAME: appdb
+      - PORT=5000
+      - DATABASE_URL=postgresql://user:password@db:5432/appdb
     depends_on:
       - db
     networks:
