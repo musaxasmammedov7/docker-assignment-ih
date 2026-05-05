@@ -21,6 +21,11 @@ jobs:
         run: |
           rsync -avz --exclude='.git' --exclude='node_modules' -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }}:~/app
 
-      - name: Run docker-compose on Azure VM
+      - name: Clean up and redeploy on Azure VM
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "cd ~/app && docker-compose pull && docker-compose up -d --build"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "cd ~/app \
+            && docker-compose down --remove-orphans \
+            && docker system prune -af \
+            && docker volume prune -f \
+            && docker-compose pull \
+            && docker-compose up -d --build"
